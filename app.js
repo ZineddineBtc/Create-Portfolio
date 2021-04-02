@@ -16,4 +16,200 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
 const nodemailer = require("nodemailer");
 const User = require("./models/user");
+const Card = require("./models/card");
 
+
+mongoose.connect("mongodb://localhost:27017/createprofileDB",//"mongodb+srv://adminzineddine:adminpassword@mycluster.sprtu.mongodb.net/myFirstDatabase", 
+    {
+        useNewUrlParser: true, 
+        useUnifiedTopology: true,
+        useFindAndModify: false, 
+        useCreateIndex: true
+    }
+);
+
+const app = express();
+app.use(express.static("public"));
+app.use(express.static(__dirname));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(busboy());
+app.set("view engine", "ejs");
+app.use(session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialize: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: "/auth/google/index",
+    passReqToCallback: true,
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+},
+    function(request, accessToken, refreshToken, profile, done) {
+        User.findOrCreate({
+            username: profile.emails[0].value, 
+            googleId: profile.id,
+            name: profile.displayName
+        }, function (err, user) {return done(err, user);});
+  }
+));
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "zineddine.bettouche.dev@gmail.com",
+      pass: process.env.EMAIL_PASSWORD
+    }
+}); 
+
+let storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        callback(null, "uploads")
+    },
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + "-" + Date.now())
+    }
+});
+let upload = multer({storage: storage});
+
+//////////////////////////////   Index Routes    ///////////////////////////////
+
+app.get("/", function(req, res){
+    res.redirect("/index");
+});
+
+app.get("/index", function(req, res){
+    if(!req.isAuthenticated()){
+        res.render("index"); 
+    } else {
+        res.render("profile", {
+            name: req.user.name
+        });
+    } 
+});
+
+////////////////////// Login/Register/Logout Routes /////////////////////
+
+app.get("/login", function(req, res){
+    if(req.isAuthenticated()) return res.render("profile"); 
+    res.render("login"); 
+});
+
+app.post("/login", function(req, res, next) {
+    passport.authenticate("local", function(error, user, info) {
+        if (error) return next(error); 
+        if (!user) return res.render("login"); 
+        req.logIn(user, function(error) {
+            if (error) return next(error); 
+            return res.redirect("/profile");
+        });
+    })(req, res, next);
+});
+
+app.get("/register", function(req, res){
+    if(req.isAuthenticated()) return res.render("profile"); 
+    res.render("register"); 
+});
+
+app.post("/register", function(req, res){
+    User.register(
+        new User({
+            username: req.body.username, 
+            name:req.body.name
+        }), 
+        req.body.password, function(error, user){
+        if(error){
+            console.log(error);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/profile");
+        });
+    });
+});
+
+app.get("/auth/google", passport.authenticate("google", {
+    scope: ['https://www.googleapis.com/auth/userinfo.profile',
+             'https://www.googleapis.com/auth/userinfo.email']
+}));
+
+app.get("/auth/google/index",
+    passport.authenticate( "google", {
+        successRedirect: "/",
+        failureRedirect: "/login"
+})); 
+
+app.get("/logout", function(req, res){
+    if(!req.isAuthenticated()) return res.render("index"); 
+    req.logout();
+    res.redirect("/index");
+    
+});
+
+///////////////////////////   Profile Routes    //////////////////////////
+
+app.get("/profile", function(req, res){
+    if(!req.isAuthenticated()) return res.render("index"); 
+    res.render("profile", {
+        name: req.user.name,
+        bio: req.user.bio,
+        sections: req.user.sections
+    });
+});
+
+app.post("/profile/create-card", function(req, res){
+    const section = req.body.section;
+    // if section isn't in user-sections => pushed.
+    User.find({_id: mongoose.Types.ObjectId(req.user._id)}, 
+        function(error, users){
+            const sections = users[0].sections;
+            if(!sections.includes(section))
+                User.findOneAndUpdate({_id: (req.user._id)}, {$push: {sections: section}}, function(error, doc){if(error){console.log(error);}});
+        }
+    );
+
+    let newCard = new Card();
+    newCard.userID = req.user._id;
+    newCard.section = section;
+    newCard.title = req.body.title;
+    newCard.description = req.body.description;
+    newCard.datetime = req.body.datetime;
+    newCard.url = req.body.url;
+    newCard.save(function(error, createdCard){
+        if(!error) {
+            res.send({
+                cardID: createdCard._id,
+                cardUserID: createdCard.userID
+            });
+        } else {
+            console.log(error);
+        }
+    });
+});
+
+app.post("/profile/get-cards", function(req, res){
+    Card.find({userID: req.user._id},
+        function(error, cards) {
+            if (error) return res.send(err);
+            res.send(cards);
+        }
+    );
+});
+
+
+
+
+
+
+
+app.listen(process.env.PORT || 3000, function(){
+    console.log("Server running on port 3000");
+});
