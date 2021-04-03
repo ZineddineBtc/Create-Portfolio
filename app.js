@@ -30,6 +30,7 @@ mongoose.connect("mongodb+srv://adminzineddine:adminpassword@cluster0.cj8av.mong
 
 const app = express();
 app.use(express.static("public"));
+app.use(express.static("uploads"));
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
