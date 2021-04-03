@@ -149,6 +149,7 @@ $("#btn-create-section").click(()=>{
     sectionTitle = sectionTitle.split(" ").join("-");
     $("#div-create-section").before(getSectionHTML(sectionTitle));
     pushSectionAJAX(sectionTitle);
+    $("#create-section-title").val("");
 });
 function getSectionHTML(sectionTitle) {
     const section = 

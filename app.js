@@ -30,7 +30,6 @@ mongoose.connect("mongodb+srv://adminzineddine:adminpassword@cluster0.cj8av.mong
 
 const app = express();
 app.use(express.static("public"));
-app.use(express.static("uploads"));
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -73,10 +72,10 @@ const transporter = nodemailer.createTransport({
 
 let storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, "uploads")
+        callback(null, 'uploads')
     },
     filename: (req, file, callback) => {
-        callback(null, file.fieldname + "-" + Date.now())
+        callback(null, file.fieldname + '-' + Date.now())
     }
 });
 let upload = multer({storage: storage});
@@ -187,7 +186,7 @@ app.post("/profile/update/:toUpdate/:name/:bio", function(req, res){
 });
 
 app.post("/profile/upload-photo", upload.single("image"), (req, res, next) => {
-    const p = path.join(__dirname + "/uploads/" + req.file.filename);
+    const p = path.join(__dirname + "/" + req.file.filename);
     imgData = fs.readFileSync(p);
     imgContentType = "image/png";
     User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
