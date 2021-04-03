@@ -5,9 +5,9 @@ getCardsAJAX();
 function setSectionsHTML() {
     const sections = $("#user-sections").text().split(",");
     sections.forEach((section)=>{
-        const predefined = (section == "project" || section == "experience" || section == "eduction");
+        const predefined = (section == "project" || section == "experience" || section == "education");
         if(predefined) return;
-        createSectionHTML(section);
+        $("#div-create-section").before(getSectionHTML(section));
     });
 }
 function getCardsAJAX() {
@@ -29,8 +29,7 @@ function fillCards(cards){
         );
     });
 }
-function createSectionHTML(section) {
-}
+
 ////////////////////    Update Name & Bio    //////////////////////
 let editable = false;
 let previousName = $("#h3-name").text();
@@ -128,9 +127,73 @@ function extensionAndSizeChecked(){
         return false;
     }
 }
-////////////////////    Create card    //////////////////////
-$("#btn-create-project").click(()=>{
-    onCreateCard("project");
+////////////////////    Create Section    //////////////////////
+$("#btn-create-section").click(()=>{
+    let sectionTitle = $("#create-section-title").val();
+    if(sectionTitle == null) {
+        $("#p-create-section").css("display", "block");
+        return;
+    } else if(sectionTitle.length < 4) {
+        $("#p-create-section").css("display", "block");
+        return;
+    }
+    $("#p-create-section").css("display", "none");
+    sectionTitle = sectionTitle.split(" ").join("-");
+    $("#div-create-section").before(getSectionHTML(sectionTitle));
+    pushSectionAJAX(sectionTitle);
+});
+function getSectionHTML(sectionTitle) {
+    const section = 
+    '<div class="jumbotron jumbotron-fluid" style="padding: 0% 10% 2%;">'+
+        '<div class="container">'+
+            '<h1 class="display-5 container-h1" style="margin-bottom: 3%;">'+sectionTitle+' <button id="'+sectionTitle+'" class="btn btn-outline-danger btn-sm btn-delete-section">Delete</button></h1>'+
+            '<p class="lead" id="p-loading-'+sectionTitle+'" style="display: none;">Loading...</p>'+
+            '<div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">'+
+                '<div class="col" id="div-create-'+sectionTitle+'">'+
+                    '<div id="card-create-'+sectionTitle+'" class="card div-card" style="width: 100%;">'+
+                        '<div class="card-body">'+
+                            '<form action="">'+
+                                '<input    id="title-'+sectionTitle+'"          class="form-control input-card-title"           type="text" placeholder="Title" required>'+
+                                '<textarea id="description-'+sectionTitle+'"    class="form-control textarea-card-description"  rows="3" placeholder="Description" required></textarea>'+
+                                '<input    id="datetime-'+sectionTitle+'"       class="form-control input-card-datetime"        type="text" placeholder="Date and Time" required>'+
+                                '<input    id="url-'+sectionTitle+'"            class="form-control input-card-url"             type="url" placeholder="Link" required>'+
+                                '<p id="p-invalid-'+sectionTitle+'" class="p-invalid-inputs">Error</p>'+
+                                '<button   id="'+sectionTitle+'" class="btn btn-primary btn-card-create" type="button">Create</button>'+
+                            '</form>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+    '</div>';
+    return section;
+}
+function pushSectionAJAX(sectionTitle) {
+    $.ajax({
+        type: "POST",
+        url: "/profile/create-section/"+sectionTitle,
+        error: function (xhr, status, error) {
+            console.log("Error: \n"+ error.message);
+        },
+    });
+}
+////////////////////    Delete Section    //////////////////////
+$(document).on("click", ".btn-delete-section", function(){
+    const c = confirm("Are you sure you want to delete it?");
+    if(!c) return;
+    const id = $(this).attr("id");
+    $(this).parent().parent().parent().remove();
+    $.ajax({
+        type: "POST",
+        url: "/profile/delete-section/"+id,
+        error: function(xhr, status, error) {
+            console.log("Error: \n"+ error.message);
+        },
+    }); 
+});
+////////////////////    Create Card    //////////////////////
+$(document).on("click", ".btn-card-create", function() {
+    onCreateCard($(this).attr("id"));
 });
 function onCreateCard(section) {
     let title = $("#title-"+ section).val();
@@ -217,7 +280,7 @@ function pushCardToDB(newCard) {
     });
 }
 function getCardHTML(cardID, cardUserID, title, description, datetime, url) {
-    let card =
+    const card =
     '<div class="col">'+
         '<div class="card div-card" style="width: 100%;">'+
             '<span class="card-user-id" style="display:none;">'+cardUserID+'</span>'+
@@ -227,7 +290,7 @@ function getCardHTML(cardID, cardUserID, title, description, datetime, url) {
                         datetime +
                     '</div>'+
                     '<div class="col-1">'+
-                        '<button id="'+ cardID +'" class="btn btn-outline-danger btn-sm btn-delete-project">delete</button>'+
+                        '<button id="'+ cardID +'" class="btn btn-outline-danger btn-sm btn-card-delete">delete</button>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
@@ -251,3 +314,18 @@ function emptyInputs(section){
     $("#datetime-"+section).val("");
     $("#url-"+section).val("");
 }
+////////////////////    Delete Card    //////////////////////
+$(document).on("click", ".btn-card-delete", function(){
+    const c = confirm("Are you sure you want to delete it?");
+    if(!c) return;
+    const id = $(this).attr("id");
+    $(this).parent().parent().parent().parent().parent().remove();
+    $.ajax({
+        type: "POST",
+        url: "/profile/delete-card/"+id,
+        success: function() {},
+        error: function(xhr, status, error) {
+            console.log("Error: \n"+ error.message);
+        },
+    }); 
+});

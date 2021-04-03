@@ -21,11 +21,11 @@
             <input class="form-control" id="input-name" type="text" style="display:none">    
         </div>
         <div class="row">
-            <div class="col-1"></div>
-            <div class="col-10">
+            <div class="col-2"></div>
+            <div class="col-8">
                 <textarea disabled class="form-control" id="textarea-bio"><%=bio%></textarea>
             </div>
-            <div class="col-1">
+            <div class="col-2">
                 <button class="btn btn-outline-light" id="btn-edit-save">Edit</button>
             </div>
         </div>
@@ -49,7 +49,7 @@
                             <input    id="datetime-project"       name="inputCardDatetimeProject"       class="form-control input-card-datetime" type="text" placeholder="Date and Time" required>
                             <input    id="url-project"            name="inputCardUrlProject"            class="form-control input-card-url" type="url" placeholder="Link" required>
                             <p id="p-invalid-project" class="p-invalid-inputs">Error</p>
-                            <button   id="btn-create-project" class="btn btn-primary btn-card-create" type="button">Create</button>
+                            <button   id="project" class="btn btn-primary btn-card-create" type="button">Create</button>
                         </form>
                     </div>
                 </div>
@@ -57,6 +57,7 @@
         </div>
     </div>
 </div>
+
 <div class="jumbotron jumbotron-fluid" style="padding: 0% 10% 2%;">
     <div class="container">
         <h1 class="display-5 container-h1" style="margin-bottom: 3%;">My Experiences</h1>
@@ -71,7 +72,7 @@
                             <input    id="datetime-experience"       name="inputCardDatetimeExperience"       class="form-control input-card-datetime" type="text" placeholder="Date and Time" required>
                             <input    id="url-experience"            name="inputCardUrlExperience"            class="form-control input-card-url" type="url" placeholder="Link" required>
                             <p id="p-invalid-experience" class="p-invalid-inputs">Error</p>
-                            <button   id="btn-create-experience" class="btn btn-primary btn-card-create" type="button">Create<span style="display: hidden;">experience</span></button>
+                            <button   id="experience" class="btn btn-primary btn-card-create" type="button">Create</button>
                         </form>
                     </div>
                 </div>
@@ -79,6 +80,7 @@
         </div>
     </div>
 </div>
+
 <div class="jumbotron jumbotron-fluid" style="padding: 0% 10% 2%;">
     <div class="container">
         <h1 class="display-5 container-h1" style="margin-bottom: 3%;">My Education</h1>
@@ -93,13 +95,19 @@
                             <input    id="datetime-education"       class="form-control input-card-datetime"        type="text" placeholder="Date and Time" required>
                             <input    id="url-education"            class="form-control input-card-url"             type="url" placeholder="Link" required>
                             <p id="p-invalid-education" class="p-invalid-inputs">Error</p>
-                            <button   id="btn-create-education" class="btn btn-primary btn-card-create" type="button">Create</button>
+                            <button   id="education" class="btn btn-primary btn-card-create" type="button">Create</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div id="div-create-section" style="padding: 4% 7%; text-align: center;">
+    <input type="text" id="create-section-title" placeholder="Section Title">
+    <button class="btn btn-primary" id="btn-create-section">Create</button>
+    <p id="p-create-section" style="display: none; color: red;"><br>Section title must be contain more than 4 characters</p>
 </div>
 
 <%- include("partials/social-links") %>

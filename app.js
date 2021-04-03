@@ -165,6 +165,32 @@ app.get("/profile", function(req, res){
     });
 });
 
+app.post("/profile/create-section/:section", function(req, res){
+    User.findOneAndUpdate(
+        {_id: req.user._id}, 
+        {$push: {sections: req.params.section}},
+        function (error, success){
+            if (error) return res.send(error);
+        }
+    );
+});
+
+app.post("/profile/delete-section/:section", function(req, res){
+    Card.deleteMany(
+        {userID: req.user._id, section: req.params.section},
+        function (error, success){
+            if (error) return res.send(error);
+        }
+    );
+    User.findOneAndUpdate(
+        {_id: req.user._id}, 
+        {$pull: {sections: req.params.section}},
+        function (error, success){
+            if (error) return res.send(error);
+        }
+    );
+});
+
 app.post("/profile/create-card", function(req, res){
     const section = req.body.section;
     // if section isn't in user-sections => pushed.
@@ -195,6 +221,13 @@ app.post("/profile/create-card", function(req, res){
     });
 });
 
+app.post("/profile/delete-card/:id", function(req, res) {
+    const id = req.params.id;
+    Card.findOneAndRemove({_id: id}, function(error){
+        if(error) console.log(error);
+    }); 
+});
+
 app.post("/profile/get-cards", function(req, res){
     Card.find({userID: req.user._id},
         function(error, cards) {
@@ -203,6 +236,7 @@ app.post("/profile/get-cards", function(req, res){
         }
     );
 });
+
 
 
 

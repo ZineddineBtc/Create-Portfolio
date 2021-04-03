@@ -131,14 +131,6 @@
     text-align: center;
     width: 100%;
 }
-.btn-card-delete {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin: 0 auto;
-    border: 1px solid black;
-    background-image: url("images/delete.png");
-}
 .input-card-title {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -166,7 +158,11 @@
     width: 100%; 
     margin: 20px 0 0;
 }
-
+#create-section-title {
+    font-size: 1.5rem;
+    border: none;
+    border-bottom: 1px solid grey;
+}
 
 /***************************  @media  ********************************/
 @media (max-width: 768px) {
@@ -182,5 +178,8 @@
     }
     .container-h1 {
         text-align: center;
+    }
+    #div-create-section {
+        padding: 7% 3%;
     }
 }
