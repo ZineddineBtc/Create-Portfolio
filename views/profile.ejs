@@ -40,9 +40,21 @@
 
 <span style="display: none" id="user-sections"><%=sections%></span>
 
-<div class="jumbotron jumbotron-fluid" style="padding: 7% 10% 2%;">
+<div class="jumbotron jumbotron-fluid" style="padding: 3% 10% 0%;">
     <div class="container">
-        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">My Projects</h1>
+        <div style="text-align: center">
+            <label for="profile-link" style="display: inline-block; margin-left: 5px; color: #42ba96">Profile Link:</label>
+            <input id="profile-link" type="text" class="form-control btn-success" style="width: 300px;display: inline-block; " disabled value=<%=profileLink%>>
+        </div>
+    </div>
+</div>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
+    <div class="container">
+        <p class="lead" id="p-loading-top" style="display: none; text-align: center;">Loading...</p>
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Projects</h1>
         <p class="lead" id="p-loading-project" style="display: none;">Loading...</p>
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
             <div class="col" id="div-create-project">
@@ -63,9 +75,11 @@
     </div>
 </div>
 
-<div class="jumbotron jumbotron-fluid" style="padding: 0% 10% 2%;">
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
     <div class="container">
-        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">My Experiences</h1>
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Experiences</h1>
         <p class="lead" id="p-loading-experience" style="display: none;">Loading...</p>
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
             <div class="col" id="div-create-experience">
@@ -86,9 +100,11 @@
     </div>
 </div>
 
-<div class="jumbotron jumbotron-fluid" style="padding: 0% 10% 2%;">
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
     <div class="container">
-        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">My Education</h1>
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Education</h1>
         <p class="lead" id="p-loading-education" style="display: none;">Loading...</p>
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
             <div class="col" id="div-create-education">
@@ -108,6 +124,8 @@
         </div>
     </div>
 </div>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
 
 <div id="div-create-section" style="padding: 4% 7%; text-align: center;">
     <input type="text" id="create-section-title" placeholder="Section Title">

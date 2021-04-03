@@ -161,12 +161,13 @@ app.get("/profile", function(req, res){
     let src;
     if(req.user.imgData === null) src = null;
     else src = "data:image/"+req.user.imgContentType+";base64,"+ req.user.imgData.toString("base64");
-
+    let profileLink = "//google.com";
     res.render("profile", {
         name: req.user.name,
         bio: req.user.bio,
         src: src,
-        sections: req.user.sections
+        sections: req.user.sections,
+        profileLink: profileLink
     });
 });
 

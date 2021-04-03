@@ -11,10 +11,12 @@ function setSectionsHTML() {
     });
 }
 function getCardsAJAX() {
+    $("#p-loading-top").css("display", "block");
     $.ajax({
         type: "POST",
         url: "/profile/get-cards",
         success: function (cards) {
+            $("#p-loading-top").css("display", "none");
              fillCards(cards);
         },
         error: function (xhr, status, error) {
@@ -266,13 +268,13 @@ function pushCard(section, title, description, datetime, url) {
     pushCardToDB(newCard);
 }
 function pushCardToDB(newCard) {
-    $("#p-loading").css("display", "block");
+    $("#p-loading-"+newCard.section).css("display", "block");
     $.ajax({
         type: "POST",
         url: "/profile/create-card",
         data: newCard,
         success: function (IDs) {
-            $("#p-loading").css("display", "none");
+            $("#p-loading-"+newCard.section).css("display", "none");
             $("#div-create-"+newCard.section).after(
                 getCardHTML(IDs.cardID, IDs.cardUserID, 
                     newCard.title, newCard.description, 
