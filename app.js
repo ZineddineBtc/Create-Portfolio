@@ -90,9 +90,7 @@ app.get("/index", function(req, res){
     if(!req.isAuthenticated()){
         res.render("index"); 
     } else {
-        res.render("profile", {
-            name: req.user.name
-        });
+        res.redirect("/profile");
     } 
 });
 
@@ -161,7 +159,7 @@ app.get("/profile", function(req, res){
     let src;
     if(req.user.imgData === null) src = null;
     else src = "data:image/"+req.user.imgContentType+";base64,"+ req.user.imgData.toString("base64");
-    let profileLink = "//google.com";
+    let profileLink = "https://create-online-portfolio.herokuapp.com/profiles/"+req.user._id;
     res.render("profile", {
         name: req.user.name,
         bio: req.user.bio,
@@ -270,7 +268,7 @@ app.post("/profile/create-card", function(req, res){
     });
 });
 
-app.post("/profile/delete-card/:id", function(req, res) {
+app.post("/profile/delete-card/:id", function(req, res){
     const id = req.params.id;
     Card.findOneAndRemove({_id: id}, function(error){
         if(error) console.log(error);
@@ -279,6 +277,30 @@ app.post("/profile/delete-card/:id", function(req, res) {
 
 app.post("/profile/get-cards", function(req, res){
     Card.find({userID: req.user._id},
+        function(error, cards) {
+            if (error) return res.send(err);
+            res.send(cards);
+        }
+    );
+});
+/////////////////////////// Exterior Profile Visit ///////////////////////////
+app.get("/profiles/:id", function(req, res){
+    User.findOne({_id: req.params.id}, function (err, user) { 
+        let src;
+        if(user.imgData === null) src = null;
+        else src = "data:image/"+user.imgContentType+";base64,"+ user.imgData.toString("base64");
+        res.render("visit-profile",{
+            isAuthenticated: req.isAuthenticated(),
+            profileID: user._id,
+            name: user.name,
+            bio: user.bio,
+            sections: user.sections,
+            src: src
+        });
+    });
+});
+app.post("/profiles/:id/get-cards", function(req, res){
+    Card.find({userID: req.params.id},
         function(error, cards) {
             if (error) return res.send(err);
             res.send(cards);

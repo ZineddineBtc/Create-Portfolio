@@ -1,0 +1,88 @@
+<%- include("partials/header") %>
+
+<section id="header-section">
+  <div class="container-fluid" id="global-container-fluid">
+    <!-- Nav Bar -->
+    <% if(!isAuthenticated) { %>
+        <%- include("partials/nav-unsigned") %>
+    <% } else { %>
+        <%- include("partials/nav-signed") %>
+    <% } %>
+    <!-- Title -->
+    <div class="title-row" style="padding-bottom: 2%;">
+        <div id="div-profile-img">
+            <% if(src === null) {%>
+                <img class="img-profile" src="/images/profile-placeholder.png" alt="">
+            <% } else { %>
+                <img class="img-profile" src= <%= src %>>
+            <% } %>
+        </div>
+        <div style="margin: 1% auto;">
+            <h3 id="h3-name"><%=name%></h3>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <textarea disabled class="form-control" id="textarea-bio"><%=bio%></textarea>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<span style="display: none" id="profileID"><%=profileID%></span>
+<span style="display: none" id="profile-sections"><%=sections%></span>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
+    <div class="container">
+        <p class="lead" id="p-loading-top" style="display: none; text-align: center;">Loading...</p>
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Projects</h1>
+        <p class="lead" id="p-loading-project" style="display: none;">Loading...</p>
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
+            <div class="col" id="div-create-project" style="display: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
+    <div class="container">
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Experiences</h1>
+        <p class="lead" id="p-loading-experience" style="display: none;">Loading...</p>
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
+            <div class="col" id="div-create-experience" style="display: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2% 10% 0%;">
+    <div class="container">
+        <h1 class="display-5 container-h1" style="margin-bottom: 3%;">Education</h1>
+        <p class="lead" id="p-loading-education" style="display: none;">Loading...</p>
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" style="margin-bottom: 2%;">
+            <div class="col" id="div-create-education" style="display: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<h1 class="display-4" style="text-align: center;">.......</h1>
+
+<div id="div-create-section" style="display: none;">
+</div>
+
+<%- include("partials/social-links") %>
+
+<!-- jQuery CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- My jQuery -->
+<script type="text/javascript" src="/javascript/visit-profile.js"></script>
+
+<%- include("partials/footer") %>

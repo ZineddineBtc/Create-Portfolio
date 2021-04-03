@@ -173,7 +173,8 @@ function getSectionHTML(sectionTitle) {
                 '</div>'+
             '</div>'+
         '</div>'+
-    '</div>';
+    '</div>'+
+    '<h1 class="display-4" style="text-align: center;">.......</h1>';
     return section;
 }
 function pushSectionAJAX(sectionTitle) {
