@@ -237,7 +237,45 @@ app.post("/profile/get-cards", function(req, res){
     );
 });
 
+/////////////////////////// Feedback - sent ///////////////////////////
+app.get("/feedback", function(req, res){
+    if(!req.isAuthenticated()) return res.render("index"); 
+    res.render("feedback", {
+        name: req.user.name
+    });
+}); 
 
+app.post("/feedback", function(req, res){
+    let mailBody = "PROJECT: Create Portfolio \n-------------------\n";
+    if(req.isAuthenticated()) {
+        mailBody += "Username: "+ req.user.username + "\n" +
+                   "Name: "+ req.user.name + "\n";
+    } else {
+        mailBody += "No Username, no name \n";
+    }
+    mailBody += req.body.feedbackDescription;
+    const mailOptions = {
+        from: "zineddine.bettouche.dev@gmail.com",
+        to: "zineddine.bettouche.dev@gmail.com",
+        subject: req.body.feedbackTitle,
+        text: mailBody
+    };  
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error){
+            console.log(error);
+        } else {
+            console.log("Email sent: " + info.response);  
+            res.redirect("/feedback-sent");
+        }
+    });
+});
+
+app.get("/feedback-sent", function(req, res){
+    if(!req.isAuthenticated()) return res.render("index"); 
+    res.render("feedback-sent", {
+        name: req.user.name
+    }); 
+}); 
 
 
 
