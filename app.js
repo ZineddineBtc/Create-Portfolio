@@ -186,7 +186,7 @@ app.post("/profile/update/:toUpdate/:name/:bio", function(req, res){
     }
 });
 
-app.post("/profile/upload-photo", upload.single("image"), (req, res, next) => {
+app.post("/profile/upload-photo", (req, res) => {
     const p = path.join(__dirname + "/uploads/" + req.file.filename);
     imgData = fs.readFileSync(p);
     imgContentType = "image/png";
