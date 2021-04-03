@@ -19,7 +19,7 @@ const User = require("./models/user");
 const Card = require("./models/card");
 
 
-mongoose.connect("mongodb://localhost:27017/createprofileDB",//"mongodb+srv://adminzineddine:adminpassword@mycluster.sprtu.mongodb.net/myFirstDatabase", 
+mongoose.connect("mongodb+srv://adminzineddine:adminpassword@cluster0.cj8av.mongodb.net/myFirstDatabase",
     {
         useNewUrlParser: true, 
         useUnifiedTopology: true,
