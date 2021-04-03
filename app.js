@@ -6,6 +6,7 @@ const path = require("path");
 const multer = require("multer");
 const express = require("express");
 const session = require("express-session");
+const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
@@ -30,8 +31,7 @@ mongoose.connect("mongodb+srv://adminzineddine:adminpassword@cluster0.cj8av.mong
 
 const app = express();
 app.use(express.static("public"));
-app.use(express.static("uploads"));
-app.use(express.static(__dirname));
+app.use(fileUpload());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(busboy());
@@ -70,16 +70,6 @@ const transporter = nodemailer.createTransport({
       pass: process.env.EMAIL_PASSWORD
     }
 }); 
-
-let storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, 'uploads')
-    },
-    filename: (req, file, callback) => {
-        callback(null, file.fieldname + '-' + Date.now())
-    }
-});
-let upload = multer({storage: storage});
 
 //////////////////////////////   Index Routes    ///////////////////////////////
 
@@ -187,20 +177,28 @@ app.post("/profile/update/:toUpdate/:name/:bio", function(req, res){
 });
 
 app.post("/profile/upload-photo", (req, res) => {
-    const p = path.join(__dirname + "/uploads/" + req.file.filename);
-    imgData = fs.readFileSync(p);
-    imgContentType = "image/png";
-    User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
-        function(error, doc){
-            if(error) console.log(error);
-            else {
-                fs.unlink(p, (error) => {
-                    if (error) throw error;
-                    console.log(p + " was deleted");
-                }); 
-                res.redirect("/profile");
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send("No files were uploaded.");
+    }
+    const uploadedFile = req.files.file;
+    var uploadPath = __dirname +"/" + uploadedFile.name;
+    uploadedFile.mv(uploadPath, function(error) {
+        if (error) return res.status(500).send(error);
+        imgData = fs.readFileSync(p);
+        imgContentType = "image/png";
+        User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
+            function(error, doc){
+                if(error) console.log(error);
+                else {
+                    fs.unlink(p, (error) => {
+                        if (error) throw error;
+                        console.log(uploadPath + " was deleted");
+                    }); 
+                    res.redirect("/profile");
+                }
             }
-        });
+        );
+    });
 });
 
 app.post("/profile/delete-photo", function(req, res) {
