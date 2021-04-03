@@ -184,8 +184,8 @@ app.post("/profile/upload-photo", (req, res) => {
     var uploadPath = __dirname +"/" + uploadedFile.name;
     uploadedFile.mv(uploadPath, function(error) {
         if (error) return res.status(500).send(error);
-        imgData = fs.readFileSync(p);
-        imgContentType = "image/png";
+        let imgData = fs.readFileSync(p);
+        let imgContentType = "image/png";
         User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
             function(error, doc){
                 if(error) console.log(error);
