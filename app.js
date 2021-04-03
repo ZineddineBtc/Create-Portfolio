@@ -184,13 +184,13 @@ app.post("/profile/upload-photo", (req, res) => {
     var uploadPath = __dirname +"/" + uploadedFile.name;
     uploadedFile.mv(uploadPath, function(error) {
         if (error) return res.status(500).send(error);
-        let imgData = fs.readFileSync(p);
+        let imgData = fs.readFileSync(uploadPath);
         let imgContentType = "image/png";
         User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
             function(error, doc){
                 if(error) console.log(error);
                 else {
-                    fs.unlink(p, (error) => {
+                    fs.unlink(uploadPath, (error) => {
                         if (error) throw error;
                         console.log(uploadPath + " was deleted");
                     }); 
