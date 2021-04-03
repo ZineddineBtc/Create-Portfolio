@@ -103,6 +103,12 @@ $("#image").change(function(){
     $("#form-img-update").trigger("submit");
 });
 
+$("#btn-img-delete").click(function(){
+    const c = confirm("Are you sure you want to delete it?");
+    if(!c) return;
+    $("#form-img-delete").trigger("submit");
+});
+
 let extension;
 function extensionAndSizeChecked(){
     if(!$("#image").val()) {
@@ -127,7 +133,7 @@ function extensionAndSizeChecked(){
         return false;
     }
 }
-////////////////////    Create Section    //////////////////////
+////////////////////    Create/Delete Section    //////////////////////
 $("#btn-create-section").click(()=>{
     let sectionTitle = $("#create-section-title").val();
     if(sectionTitle == null) {
@@ -177,7 +183,6 @@ function pushSectionAJAX(sectionTitle) {
         },
     });
 }
-////////////////////    Delete Section    //////////////////////
 $(document).on("click", ".btn-delete-section", function(){
     const c = confirm("Are you sure you want to delete it?");
     if(!c) return;
@@ -191,7 +196,7 @@ $(document).on("click", ".btn-delete-section", function(){
         },
     }); 
 });
-////////////////////    Create Card    //////////////////////
+////////////////////    Create/Delete Card    //////////////////////
 $(document).on("click", ".btn-card-create", function() {
     onCreateCard($(this).attr("id"));
 });
@@ -314,7 +319,6 @@ function emptyInputs(section){
     $("#datetime-"+section).val("");
     $("#url-"+section).val("");
 }
-////////////////////    Delete Card    //////////////////////
 $(document).on("click", ".btn-card-delete", function(){
     const c = confirm("Are you sure you want to delete it?");
     if(!c) return;

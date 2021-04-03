@@ -7,7 +7,11 @@
     <!-- Title -->
     <div class="title-row" style="padding-bottom: 2%;">
         <div id="div-profile-img">
-            <img class="img-profile" src="images/profile-placeholder.png" alt="">
+            <% if(src === null) {%>
+                <img class="img-profile" src="images/profile-placeholder.png" alt="">
+                <% } else { %>
+                <img class="img-profile" src= <%= src %>>
+                <% } %>
         </div>
         <div id="div-img-btns" style="display: none;">
             <button id="btn-img-update" class="btn btn-outline-light">Update</button>
@@ -15,6 +19,7 @@
             <form id="form-img-update" method="post" action="/profile/upload-photo" enctype="multipart/form-data" style="position: absolute; left: -9999px;">
                 <input type="file" id="image" name="image">
             </form>
+            <form id="form-img-delete" method="post" action="/profile/delete-photo" style="position: absolute; left: -9999px;"></form>
         </div>
         <div style="margin: 1% auto;">
             <h3 id="h3-name"><%=name%></h3>

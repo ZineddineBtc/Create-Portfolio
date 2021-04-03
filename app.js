@@ -158,11 +158,59 @@ app.get("/logout", function(req, res){
 
 app.get("/profile", function(req, res){
     if(!req.isAuthenticated()) return res.render("index"); 
+    let src;
+    if(req.user.imgData === null) src = null;
+    else src = "data:image/"+req.user.imgContentType+";base64,"+ req.user.imgData.toString("base64");
+
     res.render("profile", {
         name: req.user.name,
         bio: req.user.bio,
+        src: src,
         sections: req.user.sections
     });
+});
+
+app.post("/profile/update/:toUpdate/:name/:bio", function(req, res){
+    if(req.isAuthenticated()){
+        let toUpdate = req.params.toUpdate;
+        if(toUpdate === "update-name") {
+            User.findOneAndUpdate({_id: (req.user._id)}, {$set: {name: req.params.name}}, function(error, doc){if(error){console.log(error);}});
+            console.log("name updated");
+        } else if(toUpdate === "update-bio") {
+            User.findOneAndUpdate({_id: (req.user._id)}, {$set: {bio: req.params.bio}}, function(error, doc){if(error){console.log(error);}});
+            console.log("bio updated");
+        } else if(toUpdate === "update-name-bio") {
+            User.findOneAndUpdate({_id: (req.user._id)}, {$set: {name: req.params.name, bio: req.params.bio}}, function(error, doc){if(error){console.log(error);}});
+            console.log("name and bio updated");
+        }
+    }
+});
+
+app.post("/profile/upload-photo", upload.single("image"), (req, res, next) => {
+    const p = path.join(__dirname + "/uploads/" + req.file.filename);
+    imgData = fs.readFileSync(p);
+    imgContentType = "image/png";
+    User.findOneAndUpdate({_id: (req.user._id)}, {$set: {imgData: imgData, imgContentType: imgContentType}}, 
+        function(error, doc){
+            if(error) console.log(error);
+            else {
+                fs.unlink(p, (error) => {
+                    if (error) throw error;
+                    console.log(p + " was deleted");
+                }); 
+                res.redirect("/profile");
+            }
+        });
+});
+
+app.post("/profile/delete-photo", function(req, res) {
+    User.findOneAndUpdate(
+        {_id: (req.user._id)}, 
+        {$set: {imgData: null, imgContentType: null}}, 
+        function(error, doc){
+            if(error) return console.log(error);
+            res.redirect("/profile");
+        });
 });
 
 app.post("/profile/create-section/:section", function(req, res){
