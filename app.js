@@ -4,6 +4,7 @@ const fs = require("fs");
 const busboy = require("connect-busboy");
 const path = require("path");
 const multer = require("multer");
+const http = require("http");
 const express = require("express");
 const session = require("express-session");
 const fileUpload = require("express-fileupload");
@@ -16,6 +17,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
 const nodemailer = require("nodemailer");
+const htmlPDF = require("html-pdf");
 const User = require("./models/user");
 const Card = require("./models/card");
 
@@ -282,6 +284,40 @@ app.post("/profile/get-cards", function(req, res){
         }
     );
 });
+
+/* app.get("/profile/visit", function(req, res){
+    let src;
+    if(req.user.imgData === null) src = null;
+    else src = "data:image/"+req.user.imgContentType+";base64,"+ req.user.imgData.toString("base64");
+    res.render("download-profile",{
+        profileID: req.user._id,
+        name: req.user.name,
+        bio: req.user.bio,
+        sections: req.user.sections,
+        src: src
+    });    
+});
+
+app.post("/profile/download", function(req, res){
+    let data = req.body.html;
+    const type = "PDF";
+    generatedName = req.user.name + ".pdf";
+    const options = {
+        "type": "PDF",
+        "format": "A4"
+    }
+    try {
+        htmlPDF.create(data, options)
+               .toFile(generatedName, (error, result)=>{
+                    if(error) return console.log(error);
+                    res.download(result.filename);
+                    
+               });
+    } catch (error) {
+        console.log("HTML to PDF error: "+error);
+    }
+}); */
+
 /////////////////////////// Exterior Profile Visit ///////////////////////////
 app.get("/profiles/:id", function(req, res){
     User.findOne({_id: req.params.id}, function (err, user) { 
@@ -298,6 +334,7 @@ app.get("/profiles/:id", function(req, res){
         });
     });
 });
+
 app.post("/profiles/:id/get-cards", function(req, res){
     Card.find({userID: req.params.id},
         function(error, cards) {
@@ -306,7 +343,6 @@ app.post("/profiles/:id/get-cards", function(req, res){
         }
     );
 });
-
 /////////////////////////// Feedback - sent ///////////////////////////
 app.get("/feedback", function(req, res){
     if(!req.isAuthenticated()) return res.render("index"); 

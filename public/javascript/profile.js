@@ -337,3 +337,14 @@ $(document).on("click", ".btn-card-delete", function(){
         },
     }); 
 });
+
+////////////////////    Download as PDF    //////////////////////
+/* $("#btn-download").click(()=>{
+    $.ajax({
+        type: "POST",
+        url: "/profile/download",
+        error: function (xhr, status, error) {
+            console.log("Error: \n"+ error.message);
+        },
+    });
+}); */
